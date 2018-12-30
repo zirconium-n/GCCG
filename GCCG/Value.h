@@ -3,18 +3,26 @@
 #include <unordered_map>
 #include <vector>
 #include <functional>
-#include <memory>
+#include <variant>
 
-class Value : public std::enable_shared_from_this<Value>{
+class Value {
 public:
-	Value() = default;
-	Value(const Value&) = delete;
-	Value(Value&&) = delete;
-	Value& operator=(const Value&) = delete;
-	Value& operator=(Value&&) = delete;
+	using Null = std::monostate;
+	constexpr static Null null = {};
+	using Boolean = bool;
+	using Integer = std::int64_t;
+	using String = std::string;
+	using Array = std::vector<Value>;
+	using Dict = std::unordered_map<std::string, Value>;
+	//using Reference;
 
-	using Ptr = std::shared_ptr<Value>;
-	using Const_ptr = std::shared_ptr<const Value>;
+	Value() = default;
+	Value(Null);
+	Value(Boolean v);
+	Value(Integer v);
+	Value(String v);
+	Value(Array v);
+	Value(Dict v);
 
 	enum class Type {
 		null,
@@ -23,9 +31,10 @@ public:
 		string,
 		array,
 		dict,
+		reference,
 	};
 
-	virtual Type type() const = 0;
+	Type type() const;
 	bool is_null() const;
 	bool is_boolean() const;
 	bool is_integer() const;
@@ -33,23 +42,18 @@ public:
 	bool is_array() const;
 	bool is_dict() const;
 
-	
-	virtual bool get_bool() const;
-	virtual std::string get_string() const;
-	virtual std::int64_t get_integer() const;
-	
-	virtual std::vector<Ptr> get_array() const;
-	virtual std::unordered_map<std::string, Ptr> get_dict() const;
 
-	virtual Ptr operator[](std::size_t index) const;
-	virtual Ptr operator[](const std::string& index) const;
+	Boolean boolean() const;
+	const String& string() const;
+	const Integer& integer() const;
+	const Array& array() const;
+	const Dict& dict() const;
 
+	const Value& member(std::size_t index) const;
+	const Value& member(const std::string& index) const;
 
-
-	virtual Ptr clone() const = 0;
-
-	virtual ~Value() = default;
+	void set_member(std::size_t index, Value v);
+	void set_member(const std::string& index, Value v);
+private:
+	std::variant<Null, Boolean, Integer, String, Array, Dict/*, Reference*/> v_;
 };
-
-
-

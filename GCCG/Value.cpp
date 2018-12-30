@@ -2,6 +2,40 @@
 #include <exception>
 #include <stdexcept>
 
+Value::Value(Null)
+{
+}
+
+Value::Value(Boolean v)
+	: v_{ std::move(v) }
+{
+}
+
+Value::Value(Integer v)
+	: v_{ std::move(v) }
+{
+}
+
+Value::Value(String v)
+	: v_{ std::move(v) }
+{
+}
+
+Value::Value(Array v)
+	: v_{ std::move(v) }
+{
+}
+
+Value::Value(Dict v)
+	: v_{ std::move(v) }
+{
+}
+
+Value::Type Value::type() const
+{
+	return static_cast<Value::Type>(v_.index());
+}
+
 bool Value::is_null() const {
 	return type() == Type::null;
 }
@@ -26,30 +60,47 @@ bool Value::is_dict() const {
 	return type() == Type::dict;
 }
 
-bool Value::get_bool() const {
-	throw std::runtime_error("");
+Value::Boolean Value::boolean() const {
+	return std::get<Boolean>(v_);
 }
 
-std::string Value::get_string() const {
-	throw std::runtime_error("");
+const Value::String& Value::string() const {
+	return std::get<String>(v_);
 }
 
-std::int64_t Value::get_integer() const {
-	throw std::runtime_error("");
+const Value::Integer& Value::integer() const {
+	return std::get<Integer>(v_);
 }
 
-std::vector<Value::Ptr> Value::get_array() const {
-	throw std::runtime_error("");
+const Value::Array& Value::array() const {
+	return std::get<Array>(v_);
 }
 
-std::unordered_map<std::string, Value::Ptr> Value::get_dict() const {
-	throw std::runtime_error("");
+const Value::Dict& Value::dict() const {
+	return std::get<Dict>(v_);
 }
 
-Value::Ptr Value::operator[](std::size_t index) const {
-	throw std::runtime_error("");
+const Value & Value::member(std::size_t index) const
+{
+	return array().at(index);
 }
 
-Value::Ptr Value::operator[](const std::string & index) const {
-	throw std::runtime_error("");
+const Value & Value::member(const std::string & index) const
+{
+	return dict().at(index);
+}
+
+void Value::set_member(std::size_t index, Value v)
+{
+	auto& arr = std::get<Array>(v_);
+	if (index >= arr.size()) {
+		arr.resize(index + 1);
+	}
+	arr[index] = std::move(v);
+}
+
+void Value::set_member(const std::string & index, Value v)
+{
+	auto& dict = std::get<Dict>(v_);
+	dict.try_emplace(index, std::move(v));
 }
