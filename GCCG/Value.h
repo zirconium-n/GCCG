@@ -54,6 +54,26 @@ public:
 
 	void set_member(std::size_t index, Value v);
 	void set_member(const std::string& index, Value v);
+
+	friend Value operator+(const Value& lhs, const Value& rhs);
+	friend Value operator-(const Value& lhs, const Value& rhs);
+	friend Value operator*(const Value& lhs, const Value& rhs);
+	friend Value operator/(const Value& lhs, const Value& rhs);
+	friend Value operator%(const Value& lhs, const Value& rhs);
+
+	Value operator+() const;
+	Value operator-() const;
+	Value operator!() const;
 private:
-	std::variant<Null, Boolean, Integer, String, Array, Dict/*, Reference*/> v_;
+ 	std::variant<
+		Null,
+		Boolean,
+		Integer,
+		String,
+		Array,
+		Dict
+		//, Reference
+		//, Function
+		//, ...
+	> v_;
 };

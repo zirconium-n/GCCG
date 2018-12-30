@@ -115,8 +115,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="test.cpp" />
     <ClCompile Include="Value.cpp" />
     <ClCompile Include="Value.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Enitty.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
