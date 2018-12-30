@@ -120,7 +120,7 @@
     <ClCompile Include="Value.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Enitty.h" />
+    <ClInclude Include="Entity.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
