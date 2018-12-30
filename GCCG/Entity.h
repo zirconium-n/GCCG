@@ -8,7 +8,6 @@ class World;
 
 class Entity;
 
-
 class System {
 public:
 	bool validate(Entity& e) {
@@ -29,14 +28,15 @@ public:
 		return true;
 	}
 
-	virtual const std::vector<std::string>& required_attr() const = 0;
-
 	void update() {
 		for (auto pEnetity : entities) {
 			update_entity(*pEnetity);
 		}
 	}
-	virtual void update_entity(Entity& e) {}
+
+protected:
+	virtual const std::vector<std::string>& required_attr() const = 0;
+	virtual void update_entity(Entity& e) = 0;
 
 private:
 	std::unordered_set<Entity*> entities;
@@ -52,15 +52,15 @@ public:
 	// pos + velo -> positioning
 	void register_compo(/*, System ???*/);
 
-	void update(const Entity& e) const {
-		for (auto [mask, sys] : sys_map) {
-			
+	void validate(Entity& e) const {
+		for (auto& sys : systems) {
+			sys->validate(e);
 		}
 	}
 
 private:
 	using Mask = std::vector<std::string>;
-	std::vector<std::shared_ptr<System>> sys_map;
+	std::vector<std::shared_ptr<System>> systems;
 };
 
 
@@ -77,12 +77,12 @@ public:
 
 	void add_component(const std::string& name, Value v) {
 		components.try_emplace(name, std::move(v));
-		manager.update(*this);
+		manager.validate(*this);
 	}
 
 	void remove_component(const std::string& name) {
 		components.erase(name);
-		manager.update(*this);
+		manager.validate(*this);
 	}
 
 private:
