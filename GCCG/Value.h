@@ -5,6 +5,7 @@
 #include <functional>
 #include <variant>
 
+class Entity;
 class Value {
 public:
 	using Null = std::monostate;
@@ -14,6 +15,7 @@ public:
 	using String = std::string;
 	using Array = std::vector<Value>;
 	using Dict = std::unordered_map<std::string, Value>;
+	using EntityPtr = std::weak_ptr<Entity>;
 	//using Reference;
 
 	Value() = default;
@@ -23,6 +25,8 @@ public:
 	Value(String v);
 	Value(Array v);
 	Value(Dict v);
+	Value(EntityPtr v);
+
 
 	enum class Type {
 		null,
@@ -32,6 +36,7 @@ public:
 		array,
 		dict,
 		reference,
+		entity,
 	};
 
 	Type type() const;
@@ -41,7 +46,7 @@ public:
 	bool is_string() const;
 	bool is_array() const;
 	bool is_dict() const;
-
+	bool is_entity() const;
 
 	Boolean boolean() const;
 	const String& string() const;
@@ -71,7 +76,8 @@ private:
 		Integer,
 		String,
 		Array,
-		Dict
+		Dict,
+		EntityPtr
 		//, Reference
 		//, Function
 		//, ...

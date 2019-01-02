@@ -31,6 +31,11 @@ Value::Value(Dict v)
 {
 }
 
+Value::Value(EntityPtr v)
+	: v_{ std::move(v) }
+{
+}
+
 Value::Type Value::type() const
 {
 	return static_cast<Value::Type>(v_.index());
@@ -59,6 +64,11 @@ bool Value::is_array() const {
 bool Value::is_dict() const {
 	return type() == Type::dict;
 }
+
+bool Value::is_entity() const {
+	return type() == Type::entity;
+}
+
 
 Value::Boolean Value::boolean() const {
 	return std::get<Boolean>(v_);
